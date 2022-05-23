@@ -1,76 +1,22 @@
-// import React, {useState} from 'react'
-// import TodoForm from './TodoForm'
-// import Todo from './Todo'
-
-
-// function TodoList() {
-//     let [todos, setTodos ] = useState([]);
-
-//     const addTodo = todo => {
-//         if(!todo.text || /^\s*$/.test(todo.text)){
-//             return;
-//         }
-//         const newTodos = [todo, ...todos];
-//         setTodos(newTodos); 
-        
-//         // setTodos()
-//     }
-
-//     const updatedTodos =(todoId, newInput) => {
-//         if(!newInput.text || /^\s*$/.test(newInput.text)){
-//             return;
-//         };
-//         setTodos(prev => prev.map(item =>(item.id ===todoId ? newInput : item)))
-
-//     }
-//     const removeTodo = id =>{
-//         const removeArr = [...todos].filter(todo => todo.id !==id)
-//         setTodos(removeArr)
-//     }
-
-//     const completeTodo = id =>{
-//         let updatedTodos = todos.map(todo =>{
-//             if (todo.id === id){
-//                 todo.iscompleted = !todo.iscompleted;
-//             }
-
-//             // !true = false
-//             // !false = true
-//             return todo
-//         });
-//         setTodos(updatedTodos);
-//     };
-   
-
-//     // console.log(todos)
-//   return (
-//     <div>
-//         <h1>schedule for the day?</h1> 
-//         <TodoForm onSubmit={addTodo}/>
-//         <Todo todos={todos} completeTodo={completeTodo} removeTodo={removeTodo} updatedTodos={updatedTodos} />
-//     </div>
-//   )
-// }
-
-// export default TodoList
-
 import React, { useState } from 'react';
 import TodoForm from './TodoForm';
+import {FiCheckCircle} from 'react-icons/fi'
+import { RiCloseCircleLine } from 'react-icons/ri';
 import Todo from './Todo';
-
+let doneTask = [];
 function TodoList() {
-  const [todos, setTodos] = useState([]);
+  let [todos, setTodos] = useState([]);
+  // const [todo, setTodo] = useState({});
 
-
-  const addTodo = td => {
-    if (!td.text || /^\s*$/.test(td.text)) {
+  const addTodo = todo => {
+    if (!todo.text || /^\s*$/.test(todo.text)) {
       return;
     }
 
-    const newTodos = [td, ...todos];
+    const newTodos = [todo, ...todos];
 
     setTodos(newTodos);
-    console.log(...todos);
+    // console.log(...todos);
   };
 
   const updateTodo = (todoId, newValue) => {
@@ -82,36 +28,78 @@ function TodoList() {
   };
 
   const removeTodo = id => {
-    const removedArr = [...todos].filter(todo => todo.id !== id);
+    todos = [...todos].filter(todo => todo.id !== id);
 
-    setTodos(removedArr);
+    setTodos(todos);
   };
 
-  const completeTodo = id => {
-    let updatedTodos = todos.map(todo => {
+  // const completeTodo = id => {
+  //   let updatedTodos = todos.map(todo => {
+  //     if (todo.id === id) {
+  //       todo.isComplete = !todo.isComplete;
+  //     }
+  //     return todo;
+  //   });
+  //   setTodos(updatedTodos);
+  // };
+
+  const doneTodo = id => {
+    todos.map(todo => {
       if (todo.id === id) {
-        todo.isComplete = !todo.isComplete;
+          todo.isComplete = !todo.isComplete;  
+          setTodos([...todos]);     
       }
-      return todo;
-    });
-    setTodos(updatedTodos);
-  };
+    })
+  }
 
   return (
     <>
-      <h1>What your schedule for the day?
-      <p>plan your day
-      </p>
+      <h1>what's your schedule for the day??
+      <p>let's plan your day...</p>
       </h1>
-      {/* <img src="src/image/emoji2.jpeg" alt=""/> */}
-
-      <TodoForm addTodo={addTodo} />
-      <Todo
-        todos={todos}
+      <TodoForm onSubmit={addTodo} />
+      {/* <Todo
+        todos={todo}
         completeTodo={completeTodo}
         removeTodo={removeTodo}
         updateTodo={updateTodo}
-      />
+        doneTodo={doneTodo}
+      /> */}
+
+      {
+        todos.map((todo, index) => {
+          if (todo.isComplete === false) {
+            return (
+              <Todo
+                todo={todo}
+                doneTodo={doneTodo}
+                removeTodo={removeTodo}
+                updateTodo={updateTodo}
+                key={index}
+              />
+            )            
+          }
+        })
+      }
+
+      {
+        todos.map((todo, index) => {
+          if (todo.isComplete === true) {
+            return (
+              <div className={todo.isComplete ? 'todo-row complete' : 'todo-row'}>
+                  <p>{todo.text}</p>
+
+                  <div>
+                    <RiCloseCircleLine
+                      className='delete-icon'
+                      onClick={()=>removeTodo(todo.id)}
+                    />
+                  </div>
+              </div>
+            )            
+          }
+        })
+      }
     </>
   );
 }
